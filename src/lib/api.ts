@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+const PROD_API_URL = 'https://major-project-net-shield-backend.onrender.com';
+const DEV_API_URL = 'http://localhost:5000';
+
+const resolveApiBaseUrl = () => {
+  const configuredUrl = import.meta.env.VITE_API_URL?.trim();
+  if (configuredUrl) return configuredUrl;
+
+  return import.meta.env.PROD ? PROD_API_URL : DEV_API_URL;
+};
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: resolveApiBaseUrl(),
 });
 
 api.interceptors.request.use((config) => {

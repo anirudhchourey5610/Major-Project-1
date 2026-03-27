@@ -14,11 +14,33 @@ dotenv.config({ path: '../.env' });
 
 const app = express();
 
-// CORS configuration for production
+const defaultAllowedOrigins = [
+  'https://net-shield-security.vercel.app',
+  'https://major-project-1-delta.vercel.app',
+];
+
+const allowedOrigins = [
+  ...new Set(
+    [
+      ...defaultAllowedOrigins,
+      ...(process.env.FRONTEND_URL || '')
+        .split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean),
+    ],
+  ),
+];
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || '*',
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+  },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));

@@ -123,6 +123,7 @@ VITE_API_URL=http://localhost:5000
 MONGODB_URI=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/netshield
 JWT_SECRET=your_secure_secret_key_here
 PORT=5000
+FRONTEND_URL=http://localhost:5173,https://your-vercel-app.vercel.app
 ```
 
 **⚠️ Never commit `.env` file to GitHub. Keep it local only.**

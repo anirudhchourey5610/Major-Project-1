@@ -41,6 +41,7 @@
    MONGODB_URI=your_mongodb_atlas_connection_string
    JWT_SECRET=your_secure_random_secret_key
    PORT=5000
+   FRONTEND_URL=https://your-vercel-app.vercel.app,https://your-custom-domain.com
    ```
 
 4. **Advanced Settings (Optional):**
@@ -63,6 +64,8 @@ Update your frontend `.env` file:
 ```
 VITE_API_URL=https://netshield-backend.onrender.com
 ```
+
+If you deploy the frontend without `VITE_API_URL`, the app should still use the production Render API URL defined in the client. For local development, it continues to use `http://localhost:5000`.
 
 ## Testing
 
