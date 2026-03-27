@@ -47,7 +47,7 @@ A network security dashboard that captures packet events, classifies threats, an
 ## 🌐 Deployment
 
 This project is now set up to run as a single Vercel project:
-
+- Live Project: https://major-project-1-yuv5.vercel.app
 - the Vite frontend is served by Vercel
 - the Express backend is exposed through `api/index.js`
 - production frontend requests use the same domain, so `VITE_API_URL` is optional
