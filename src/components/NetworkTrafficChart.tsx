@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Activity } from 'lucide-react';
-import { PacketLog } from '../lib/supabase';
+import { PacketLog } from '../lib/api';
 
 interface NetworkTrafficChartProps {
   data: PacketLog[];
 }
 
-export const NetworkTrafficChart: React.FC<NetworkTrafficChartProps> = ({ data }) => {
+export const NetworkTrafficChart = ({ data }: NetworkTrafficChartProps) => {
   const chartData = useMemo(() => {
     const last24Hours = new Array(24).fill(0);
     const now = new Date();

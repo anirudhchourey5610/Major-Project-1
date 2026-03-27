@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Search, Download } from 'lucide-react';
 import { api, PacketLog } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 
-export const Logs: React.FC = () => {
+export const Logs = () => {
   const { user } = useAuth();
   const [logs, setLogs] = useState<PacketLog[]>([]);
-  const [filteredLogs, setFilteredLogs] = useState<PacketLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -20,10 +19,6 @@ export const Logs: React.FC = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    filterLogs();
-  }, [logs, searchTerm, statusFilter, protocolFilter]);
-
   const fetchLogs = async () => {
     try {
       const { data } = await api.get('/api/logs');
@@ -35,29 +30,34 @@ export const Logs: React.FC = () => {
     }
   };
 
-  const filterLogs = () => {
+  const filteredLogs = useMemo(() => {
     let filtered = logs;
+
     if (searchTerm) {
       filtered = filtered.filter((log) =>
         log.src_ip.includes(searchTerm) ||
         log.dest_ip.includes(searchTerm) ||
-        log.protocol.toLowerCase().includes(searchTerm.toLowerCase())
+        log.protocol.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
+
     if (statusFilter !== 'all') {
       filtered = filtered.filter((log) => log.status === statusFilter);
     }
+
     if (protocolFilter !== 'all') {
       filtered = filtered.filter((log) => log.protocol === protocolFilter);
     }
-    setFilteredLogs(filtered);
+
+    return filtered;
+  }, [logs, protocolFilter, searchTerm, statusFilter]);
+
+  useEffect(() => {
     setCurrentPage(1);
-  };
+  }, [searchTerm, statusFilter, protocolFilter]);
 
   const protocols = Array.from(new Set(logs.map((log) => log.protocol)));
   const paginatedLogs = filteredLogs.slice((currentPage - 1) * logsPerPage, currentPage * logsPerPage);
-  const totalPages = Math.ceil(filteredLogs.length / logsPerPage);
-
   const statusConfig = {
     normal: { bg: 'bg-emerald-500/10', text: 'text-emerald-500', label: 'Normal' },
     suspicious: { bg: 'bg-yellow-500/10', text: 'text-yellow-500', label: 'Suspicious' },

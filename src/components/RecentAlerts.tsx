@@ -1,4 +1,3 @@
-import React from 'react';
 import { AlertTriangle, Clock } from 'lucide-react';
 import { Alert } from '../lib/api';
 
@@ -6,7 +5,7 @@ interface RecentAlertsProps {
   alerts: Alert[];
 }
 
-export const RecentAlerts: React.FC<RecentAlertsProps> = ({ alerts }) => {
+export const RecentAlerts = ({ alerts }: RecentAlertsProps) => {
   const severityConfig = {
     critical: { bg: 'bg-red-500', text: 'text-red-500', border: 'border-red-500' },
     high: { bg: 'bg-orange-500', text: 'text-orange-500', border: 'border-orange-500' },

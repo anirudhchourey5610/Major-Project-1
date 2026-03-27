@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { getApiErrorMessage } from '../lib/api';
 import { Shield } from 'lucide-react';
 
-export const Login: React.FC = () => {
+export const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,8 +22,8 @@ export const Login: React.FC = () => {
       } else {
         await signUp(email, password);
       }
-    } catch (err: any) {
-      setError(err?.message || 'An error occurred');
+    } catch (error) {
+      setError(getApiErrorMessage(error, 'An error occurred'));
     } finally {
       setLoading(false);
     }

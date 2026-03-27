@@ -18,16 +18,15 @@ pip install scapy requests
 
 The script uses environment variables for configuration:
 
-- `SUPABASE_URL`: Your Supabase project URL (default: provided)
-- `SUPABASE_ANON_KEY`: Your Supabase anonymous key (default: provided)
-- `USER_ID`: Your user ID from Supabase authentication (REQUIRED for database logging)
+- `API_URL`: Base URL for the Net Shield backend. Use `http://localhost:5000` locally or your Vercel URL in production.
+- `USER_ID`: Your MongoDB user ID from the Net Shield dashboard.
 
 ## Getting Your User ID
 
 1. Sign up/login to the Net Shield dashboard
 2. Open browser developer console (F12)
 3. Go to Application/Storage → Local Storage
-4. Find your Supabase session data
+4. Find the stored authenticated user data
 5. Copy your user ID
 
 ## Usage
@@ -39,12 +38,14 @@ sudo python3 packet_analyzer.py
 
 ### With Database Logging
 ```bash
+export API_URL='http://localhost:5000'
 export USER_ID='your-user-id-here'
 sudo -E python3 packet_analyzer.py
 ```
 
 ### Run as Background Service
 ```bash
+export API_URL='http://localhost:5000'
 export USER_ID='your-user-id-here'
 sudo -E nohup python3 packet_analyzer.py > packet_capture.log 2>&1 &
 ```
@@ -70,7 +71,7 @@ sudo -E nohup python3 packet_analyzer.py > packet_capture.log 2>&1 &
 
 ### Packet Logging
 
-All packets are logged to Supabase with:
+All packets are logged to MongoDB through the Net Shield API with:
 - Source and destination IP addresses
 - Protocol (TCP/UDP/ICMP)
 - Packet size
@@ -117,7 +118,7 @@ ip link show
 
 ### Database Not Updating
 - Ensure USER_ID is set correctly
-- Verify Supabase credentials
+- Verify API_URL points to a running backend
 - Check network connectivity
 - Review logs for error messages
 
@@ -128,7 +129,7 @@ The packet analyzer integrates seamlessly with the Net Shield web dashboard:
 1. Logs appear in real-time on the Logs page
 2. Alerts trigger notifications on the Dashboard and Alerts page
 3. Reports automatically include captured packet data
-4. All data syncs via Supabase in real-time
+4. All data syncs through the Net Shield API
 
 ## Performance
 
@@ -144,4 +145,4 @@ The packet analyzer integrates seamlessly with the Net Shield web dashboard:
 - GeoIP location tracking
 - Advanced protocol analysis
 - Packet payload inspection
-- Email notifications via Supabase Functions
+- Email notifications via backend jobs

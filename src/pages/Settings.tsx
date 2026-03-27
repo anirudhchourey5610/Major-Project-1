@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Save } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 
-export const Settings: React.FC = () => {
+export const Settings = () => {
   const { user } = useAuth();
   const [settings, setSettings] = useState(user?.settings || { alert_threshold_low: 10, alert_threshold_medium: 5, alert_threshold_high: 2, email_notifications: true });
 

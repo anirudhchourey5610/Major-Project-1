@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { api, UserProfile } from '../lib/api';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { api, getApiErrorMessage, UserProfile } from '../lib/api';
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -11,7 +11,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,9 +35,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data } = await api.post('/auth/login', { email, password });
       localStorage.setItem('token', data.token);
       setUser(data.user);
-    } catch (err: any) {
-      const message = err?.response?.data?.error || err.message || 'Login failed';
-      throw new Error(message);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Login failed'));
     }
   };
 
@@ -46,9 +45,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data } = await api.post('/auth/signup', { email, password, role });
       localStorage.setItem('token', data.token);
       setUser(data.user);
-    } catch (err: any) {
-      const message = err?.response?.data?.error || err.message || 'Sign up failed';
-      throw new Error(message);
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, 'Sign up failed'));
     }
   };
 
@@ -64,6 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) throw new Error('useAuth must be used within an AuthProvider');

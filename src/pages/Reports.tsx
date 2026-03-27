@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { FileText, Download, TrendingUp, AlertTriangle, Shield } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { FileText } from 'lucide-react';
 import { api, Report } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 
-export const Reports: React.FC = () => {
+export const Reports = () => {
   const { user } = useAuth();
   const [reports, setReports] = useState<Report[]>([]);
-  const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
@@ -19,8 +18,6 @@ export const Reports: React.FC = () => {
       setReports(data || []);
     } catch (error) {
       console.error('Error fetching reports:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

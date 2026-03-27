@@ -1,6 +1,6 @@
 # Net Shield - Network Security Analyzer
 
-A comprehensive real-time network security analyzer that monitors, detects, and reports malicious or suspicious network activity. Built with React, MongoDB, and Python.
+A network security dashboard that captures packet events, classifies threats, and presents logs, alerts, reports, and user settings through a React interface backed by MongoDB and Express.
 
 ## 🎯 Features
 
@@ -44,10 +44,13 @@ A comprehensive real-time network security analyzer that monitors, detects, and 
 - Role-based access control (Admin, Analyst, Viewer)
 - User profile management
 
-## 🌐 Live Deployment
+## 🌐 Deployment
 
-- **Frontend**: https://net-shield-security.vercel.app
-- **Backend API**: https://major-project-net-shield-backend.onrender.com
+This project is now set up to run as a single Vercel project:
+
+- the Vite frontend is served by Vercel
+- the Express backend is exposed through `api/index.js`
+- production frontend requests use the same domain, so `VITE_API_URL` is optional
 
 ## 🛠️ Tech Stack
 
@@ -57,31 +60,18 @@ A comprehensive real-time network security analyzer that monitors, detects, and 
 - **Packet Capture**: Python 3, Scapy
 - **Icons**: Lucide React
 - **Build Tool**: Vite
-- **Deployment**: Vercel (Frontend), Render (Backend)
+- **Deployment**: Vercel Functions + Vercel Static Hosting
 
 ## 📁 Project Structure
 
 ```
 NetShield/
-├── project/                    # Frontend application
-│   ├── src/
-│   │   ├── components/        # Reusable UI components
-│   │   ├── contexts/          # React context providers
-│   │   ├── lib/               # Utilities and configurations
-│   │   ├── pages/             # Main application pages
-│   │   │   ├── Dashboard.tsx
-│   │   │   ├── Logs.tsx
-│   │   │   ├── Alerts.tsx
-│   │   │   ├── Reports.tsx
-│   │   │   └── Settings.tsx
-│   │   └── App.tsx
-│   ├── package.json
-│   ├── .env.example
-│   └── vite.config.ts
-├── capture/                   # Python packet analyzer
-│   ├── packet_analyzer.py
-│   ├── requirements.txt
-│   └── README.md
+├── api/                # Vercel serverless entrypoint
+├── capture/            # Python packet analyzer
+├── server/             # Express app, database connection, Mongoose models
+├── src/                # React frontend
+├── .env.example
+├── vercel.json
 └── README.md
 ```
 
@@ -98,55 +88,57 @@ NetShield/
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/anuragchoudhary2313/Major-Project-Net-Shield-.git
-cd Major-Project-Net-Shield-/project
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
 ```
 
-#### 2. Install Frontend Dependencies
+#### 2. Install Node Dependencies
 ```bash
 npm install
 ```
 
 #### 3. Install Python Dependencies
 ```bash
-cd ../capture
+cd capture
 pip install -r requirements.txt
-cd ../project
+cd ..
 ```
 
 #### 4. Environment Setup
 
-Create a `.env` file in the `project` folder (use `.env.example` as template):
+Create a `.env` file in the project root from `.env.example`:
 
 ```bash
-VITE_API_URL=http://localhost:5000
 MONGODB_URI=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/netshield
 JWT_SECRET=your_secure_secret_key_here
-PORT=5000
-FRONTEND_URL=http://localhost:5173,https://your-vercel-app.vercel.app
+FRONTEND_URL=http://localhost:5173,https://your-vercel-project.vercel.app
+VITE_API_URL=
 ```
 
 **⚠️ Never commit `.env` file to GitHub. Keep it local only.**
 
 ### Running the Application
 
-#### 1. Start MongoDB
-Ensure MongoDB Atlas connection is active or run local MongoDB server.
+#### 1. Start the backend API
+```bash
+npm run server
+```
 
-#### 2. Start the Frontend Development Server
+#### 2. Start the frontend development server
 ```bash
 npm run dev
 ```
 Open `http://localhost:5173` in your browser.
 
-#### 3. Create User Account
+#### 3. Create a user account
 - Sign up with email and password
 - Your account will be created in MongoDB
 
-#### 4. Run Packet Analyzer (Terminal 2)
+#### 4. Run the packet analyzer
 ```bash
 cd capture
 export USER_ID='your-user-id-from-mongodb'
+export API_URL='http://localhost:5000'
 sudo -E python3 packet_analyzer.py
 ```
 
@@ -154,7 +146,49 @@ sudo -E python3 packet_analyzer.py
 ```powershell
 cd capture
 $env:USER_ID='your-user-id'
+$env:API_URL='http://localhost:5000'
 python3 packet_analyzer.py
+```
+
+## 🚀 Vercel Deployment
+
+### 1. Push the repo to GitHub
+
+Commit the full project, including `api/index.js`, `server/`, `src/`, and `vercel.json`.
+
+### 2. Import the repo into Vercel
+
+1. Open [Vercel](https://vercel.com)
+2. Click `Add New Project`
+3. Import the GitHub repository
+4. Keep the root directory as the repository root
+
+### 3. Add Vercel environment variables
+
+Set these variables in the Vercel project:
+
+```bash
+MONGODB_URI=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/netshield
+JWT_SECRET=your_secure_secret_key_here
+FRONTEND_URL=https://your-vercel-project.vercel.app
+```
+
+`VITE_API_URL` is optional. Leave it empty to use same-origin API calls in production.
+
+### 4. Deploy
+
+After the first deploy:
+
+- frontend pages are served from the main Vercel domain
+- auth routes work at `/auth/*`
+- data routes work at `/api/*`
+
+### 5. Point the packet analyzer to production
+
+If you want the Python analyzer to send data to the deployed app:
+
+```bash
+export API_URL='https://your-vercel-project.vercel.app'
 ```
 
 ## 🔒 Security Features
@@ -216,9 +250,10 @@ SUSPICIOUS_PORTS = [22, 23, 445, 3389, 3306, 5432]
 
 1. Sign up for an account
 2. Get your User ID from MongoDB
-3. Configure alert thresholds in Settings
-4. Start the packet analyzer
-5. Monitor the dashboard
+3. Set `USER_ID` in the packet analyzer terminal
+4. Configure alert thresholds in Settings
+5. Start the packet analyzer
+6. Monitor the dashboard
 
 ### Monitoring Network Activity
 

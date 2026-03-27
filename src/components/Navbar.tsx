@@ -1,4 +1,3 @@
-import React from 'react';
 import { Shield, Activity, AlertTriangle, FileText, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -7,8 +6,8 @@ interface NavbarProps {
   onNavigate: (page: string) => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
-  const { signOut, profile } = useAuth();
+export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
+  const { signOut, user } = useAuth();
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Activity },
@@ -52,14 +51,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
           </div>
 
           <div className="flex items-center space-x-4">
-            {profile && (
+            {user && (
               <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-slate-800 rounded-lg border border-slate-700">
                 <div className={`w-2 h-2 rounded-full ${
-                  profile.role === 'admin' ? 'bg-red-500' :
-                  profile.role === 'analyst' ? 'bg-yellow-500' :
+                  user.role === 'admin' ? 'bg-red-500' :
+                  user.role === 'analyst' ? 'bg-yellow-500' :
                   'bg-blue-500'
                 }`} />
-                <span className="text-sm text-slate-300 capitalize">{profile.role}</span>
+                <span className="text-sm text-slate-300 capitalize">{user.role}</span>
               </div>
             )}
 

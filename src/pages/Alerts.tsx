@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { AlertTriangle, CheckCircle } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { CheckCircle } from 'lucide-react';
 import { api, Alert } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 
-export const Alerts: React.FC = () => {
+export const Alerts = () => {
   const { user } = useAuth();
   const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [filteredAlerts, setFilteredAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -14,10 +13,6 @@ export const Alerts: React.FC = () => {
   useEffect(() => {
     if (user) fetchAlerts();
   }, [user]);
-
-  useEffect(() => {
-    filterAlerts();
-  }, [alerts, severityFilter, statusFilter]);
 
   const fetchAlerts = async () => {
     try {
@@ -30,12 +25,19 @@ export const Alerts: React.FC = () => {
     }
   };
 
-  const filterAlerts = () => {
+  const filteredAlerts = useMemo(() => {
     let filtered = alerts;
-    if (severityFilter !== 'all') filtered = filtered.filter((alert) => alert.severity === severityFilter);
-    if (statusFilter !== 'all') filtered = filtered.filter((alert) => alert.status === statusFilter);
-    setFilteredAlerts(filtered);
-  };
+
+    if (severityFilter !== 'all') {
+      filtered = filtered.filter((alert) => alert.severity === severityFilter);
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter((alert) => alert.status === statusFilter);
+    }
+
+    return filtered;
+  }, [alerts, severityFilter, statusFilter]);
 
   const updateAlertStatus = async (alertId: string, newStatus: 'investigating' | 'resolved') => {
     try {

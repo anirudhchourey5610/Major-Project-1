@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Activity, AlertTriangle, Shield, TrendingUp } from 'lucide-react';
 import { api, Alert, PacketLog } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { NetworkTrafficChart } from '../components/NetworkTrafficChart';
 import { RecentAlerts } from '../components/RecentAlerts';
 
-export const Dashboard: React.FC = () => {
+export const Dashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState({
     totalPackets: 0,
